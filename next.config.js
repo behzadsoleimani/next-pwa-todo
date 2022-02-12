@@ -3,6 +3,7 @@ const runtimeCaching = require("next-pwa/cache");
 
 module.exports = withPWA({
 	reactStrictMode: true,
+	setupFilesAfterEnv: ["./jest.config.js"],
 	pwa: {
 		dest: "public",
 		register: true,
