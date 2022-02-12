@@ -1,21 +1,34 @@
 import React, { useState } from "react";
 import { AddCircleOutlineOutlined as Add } from '@mui/icons-material';
 import { TextField, IconButton } from "@mui/material";
+import { useUpdateList, useAllList } from "../hooks";
+import { makeStyles } from '@mui/styles';
 
-const AddTodoForm = ({
-    addToList
-}: any) => {
+
+const useStyles = makeStyles({
+    text: {
+        width: "100%"
+    },
+    addIcon: {
+        fontSize: "2rem"
+    }
+});
+const AddTodoForm = () => {
     const [inputValue, setInputValue] = useState("");
     const [error, setError] = useState("");
+    const { data } = useAllList();
+    const { mutate } = useUpdateList();
+    const classes = useStyles();
 
-    const styles: any = {
-        text: {
-            width: "100%"
-        },
-        addIcon: {
-            fontSize: "2rem"
+    const addToList = (todoValue: string) => {
+        const newItem: any = {
+            id: new Date().getTime(),
+            value: todoValue,
+            status: "active"
         }
-    }
+
+        mutate(Array.isArray(data) ? [...data, newItem] : [newItem]);
+    };
 
     const handleChange = ({ target }: any) => {
         setInputValue(target.value)
@@ -40,7 +53,7 @@ const AddTodoForm = ({
     }
     return (
         <div style={{ display: "flex" }}>
-            <div style={styles.text}
+            <div className={classes.text}
             >
                 <TextField
                     placeholder="Enter a Value"
@@ -48,17 +61,17 @@ const AddTodoForm = ({
                     onKeyDown={handleKeyDown}
                     value={inputValue}
                     error={!!error}
-                    style={styles.text}
+                    className={classes.text}
                     helperText={error}
                 />
             </div>
             <div>
                 <IconButton
                     disabled={!inputValue}
-
+                    onClick={handleAdd}
                 >
-                    <Add onClick={handleAdd}
-                        style={styles.addIcon} />
+                    <Add 
+                        className={classes.addIcon} />
                 </IconButton>
             </div>
         </div>

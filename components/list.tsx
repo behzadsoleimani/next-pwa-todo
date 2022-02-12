@@ -1,33 +1,48 @@
 import React from "react";
 import Todo from "./todo-item";
 import EditTodo from "../components/edit-todo";
-import { Grid } from "@mui/material";
+import { CircularProgress, Grid } from "@mui/material";
+import { useAllList } from "../hooks";
+import { IListItem } from "../types";
+import { makeStyles } from '@mui/styles';
 
-const List = (props: any) => {
 
-const renderTodo = (item: any) => {
-      return (
-          item.status === "active" ? 
-        <Todo
-          key={item.id}
-          index={item.id}
-          todo={item.value}
-          deleteTodo={props.deleteTodo}
-          updateTodo={props.updateTodo}
-        /> 
-        : 
-        <EditTodo
-          key={item.id}
-          index={item.id}
-          todo={item.value}
-          saveTodo={props.saveTodo}
-        /> 
-      );
+const useStyles = makeStyles({
+    parentList: {
+        justifyContent: "center"
     }
+});
+
+
+const renderTodo = (item: IListItem) => {
     return (
-      <Grid container>
-        {props.list.map((item: any) => renderTodo(item))}
-      </Grid>
+        item.status === "active" ?
+            <Todo
+                key={item.id}
+                index={item.id}
+                value={item.value}
+            />
+            :
+            <EditTodo
+                key={item.id}
+                index={item.id}
+                value={item.value}
+            />
+    );
+}
+const List = () => {
+
+    const { isLoading, data } = useAllList();
+
+    const classes = useStyles();
+
+
+
+    return (
+        <Grid container className={classes.parentList}>
+            {isLoading ? <CircularProgress  /> :
+                (data || []).map((item: IListItem) => renderTodo(item))}
+        </Grid>
     );
 }
 
